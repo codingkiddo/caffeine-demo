@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.example.cache.service.ProductServiceCacheTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.333 s -- in com.example.cache.service.ProductServiceCacheTest

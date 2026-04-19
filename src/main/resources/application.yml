@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: caffeine-demo
+
+  # ── Database (H2 in-memory) ─────────────────────────────────────────────
+  datasource:
+    url: jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true              # http://localhost:8080/h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop      # auto-creates schema from entities on startup
+    show-sql: false
+    open-in-view: false
+    defer-datasource-initialization: true   # ensures data.sql runs AFTER Hibernate DDL
+
+  # ── Cache ───────────────────────────────────────────────────────────────
+  # NOTE: The Java CacheConfig bean OVERRIDES these for per-cache specs.
+  # These act as sensible defaults if you remove the Java bean.
+  cache:
+    type: caffeine
+    cache-names:
+      - products
+      - categories
+      - users
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m,recordStats
+
+# ── Actuator ────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, caches, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    cache:
+      instrument:
+        auto: true               # auto-binds CaffeineCache stats to Micrometer
+    tags:
+      application: ${spring.application.name}
+
+# ── Logging ──────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.example.cache: DEBUG
+    org.springframework.cache: TRACE   # shows @Cacheable hit/miss in logs
